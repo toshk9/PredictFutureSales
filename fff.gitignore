@@ -1,0 +1,6 @@
+__pycache__/
+
+*.bak
+*.backup
+
+.ipynb_checkpoints/
