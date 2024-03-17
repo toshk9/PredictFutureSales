@@ -4,52 +4,114 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import mean_squared_error
 
-class ModelErrorAnalysis:
-    def __init__(self, model, X, y):
-        self.model = model
-        self.X = X
-        self.y = y
-        self.predictions = self.model.predict(self.X)
-        self.errors = self.predictions - self.y
+from typing import Union
 
-    def calculate_metrics(self):
-        mae = np.mean(np.abs(self.errors))
-        mse = mean_squared_error(self.y, self.predictions)
-        rmse = np.sqrt(mse)
+
+class ModelErrorAnalysis:
+    """
+    A class for analyzing errors of a machine learning model.
+
+    Args:
+        model: The trained machine learning model.
+        X_test (Union[pd.DataFrame, np.array]): Testing features.
+        y_test (Union[pd.DataFrame, np.array]): Testing target.
+
+    Attributes:
+        model: The trained machine learning model.
+        X_test (Union[pd.DataFrame, np.array]): Testing features.
+        y_test (Union[pd.DataFrame, np.array]): Testing target.
+        predictions (np.array): Predictions made by the model.
+        errors (np.array): Errors between predictions and actual values.
+
+    Methods:
+        calculate_metrics(): Calculates error metrics.
+        plot_residuals(): Plots residuals.
+        analyze_big_target(target_threshold): Analyzes errors for large target values.
+        analyze_small_dynamic(dynamic_threshold): Analyzes errors for small dynamic values.
+        find_influential_samples(threshold): Finds influential samples based on error threshold.
+    """
+    def __init__(self, model, X_test: Union[pd.DataFrame, np.array], y_test: Union[pd.DataFrame, np.array]) -> None:
+        """
+        Initializes a ModelErrorAnalysis object.
+
+        Args:
+            model: The trained machine learning model.
+            X_test (Union[pd.DataFrame, np.array]): Testing features.
+            y_test (Union[pd.DataFrame, np.array]): Testing target.
+        """
+        self.model = model
+        self.X_test: Union[pd.DataFrame, np.array] = X_test
+        self.y_test: Union[pd.DataFrame, np.array] = y_test
+
+        self.predictions: np.array = self.model.predict(self.X_test)
+
+        self.errors: np.array = self.predictions - self.y_test
+
+    def calculate_metrics(self) -> dict:
+        """
+        Calculates error metrics.
+
+        Returns:
+            dict: Dictionary containing error metrics.
+        """
+        mae: np.float64 = np.mean(np.abs(self.errors))
+        mse: np.float64 = mean_squared_error(self.y_test, self.predictions)
+        rmse: np.float64 = np.sqrt(mse)
         return {'MAE': mae, 'MSE': mse, 'RMSE': rmse}
 
-    def plot_residuals(self):
+    def plot_residuals(self) -> None:
+        """
+        Plots residuals.
+        
+        Returns:
+            None
+        """
         plt.figure(figsize=(10, 6))
-        sns.residplot(self.predictions, self.errors, lowess=True, line_kws={'color': 'red', 'lw': 1})
+        sns.residplot(x=self.predictions, y=self.errors, lowess=True, line_kws={'color': 'red', 'lw': 1})
         plt.title('Residuals Plot')
         plt.xlabel('Predicted Values')
         plt.ylabel('Residuals')
         plt.show()
 
-    def analyze_big_target(self, target_threshold):
-        big_target_indices = self.y >= target_threshold
-        big_target_errors = self.errors[big_target_indices]
-        big_target_mae = np.mean(np.abs(big_target_errors))
+    def analyze_big_target(self, target_threshold) -> np.float64:
+        """
+        Analyzes errors for large target values.
+
+        Args:
+            target_threshold: Threshold for defining large target values.
+
+        Returns:
+            np.float64: Mean absolute error for large target values.
+        """
+        big_target_indices: np.array = self.y >= target_threshold
+        big_target_errors: np.array  = self.errors[big_target_indices]
+        big_target_mae: np.float64 = np.mean(np.abs(big_target_errors))
         return big_target_mae
 
-    def analyze_small_dynamic(self, dynamic_threshold):
-        dynamic_indices = np.abs(self.y) <= dynamic_threshold
-        dynamic_errors = self.errors[dynamic_indices]
-        dynamic_mae = np.mean(np.abs(dynamic_errors))
+    def analyze_small_dynamic(self, dynamic_threshold) -> np.float64:
+        """
+        Analyzes errors for small dynamic values.
+
+        Args:
+            dynamic_threshold: Threshold for defining small dynamic values.
+
+        Returns:
+            np.float64: Mean absolute error for small dynamic values.
+        """
+        dynamic_indices: np.array  = np.abs(self.y) <= dynamic_threshold
+        dynamic_errors: np.array  = self.errors[dynamic_indices]
+        dynamic_mae: np.float64 = np.mean(np.abs(dynamic_errors))
         return dynamic_mae
 
-    def find_influential_samples(self, threshold):
-        influential_samples = np.abs(self.errors) > threshold
-        return self.X[influential_samples], self.y[influential_samples], self.errors[influential_samples]
+    def find_influential_samples(self, threshold) -> tuple:
+        """
+        Finds influential samples based on error threshold.
 
-# Example usage:
-# model_error_analysis = ModelErrorAnalysis(model, X_test, y_test)
-# metrics = model_error_analysis.calculate_metrics()
-# print("Model Metrics:", metrics)
-# model_error_analysis.plot_residuals()
-# big_target_mae = model_error_analysis.analyze_big_target(100)
-# print("MAE for big targets:", big_target_mae)
-# dynamic_mae = model_error_analysis.analyze_small_dynamic(10)
-# print("MAE for small dynamic:", dynamic_mae)
-# influential_X, influential_y, influential_errors = model_error_analysis.find_influential_samples(20)
-# print("Influential Samples:", influential_X, influential_y, influential_errors)
+        Args:
+            threshold: Error threshold for defining influential samples.
+
+        Returns:
+            tuple: Tuple containing influential samples' features, target values, and errors.
+        """
+        influential_samples: np.array = np.abs(self.errors) > threshold
+        return self.X_test[influential_samples], self.y_test[influential_samples], self.errors[influential_samples]

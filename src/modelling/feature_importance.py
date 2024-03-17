@@ -5,54 +5,99 @@ from matplotlib import pyplot as plt
 
 from boruta import BorutaPy
 
+from typing import Union, List
+
+
 class Feature_Importance:
-    def __init__(self, model, X: pd.DataFrame, y) -> None:
+    """
+    A class for computing and visualizing feature importances.
+
+    Args:
+        model: The trained machine learning model.
+        feature_names (List[str]): Names of the features.
+
+    Attributes:
+        model: The trained machine learning model.
+        feature_names (List[str]): Names of the features.
+
+    Methods:
+        fi_impurity(): Computes feature importances using impurity-based methods.
+        fi_impurity_visualize(std: np.array, forest_importances: pd.Series, **vis_params: dict): 
+            Visualizes impurity-based feature importances.
+        boruta_importance(X_train: Union[pd.DataFrame, np.array], y_train: Union[pd.DataFrame, np.array], **boruta_params: dict): 
+            Computes feature importances using Boruta algorithm.
+    """
+    def __init__(self, model, feature_names: List[str]) -> None:
+        """
+        Initializes a Feature_Importance object.
+
+        Args:
+            model: The trained machine learning model.
+            feature_names (List[str]): Names of the features.
+        """
         self.model = model
-        self.X = X
-        self.y = y
-        
+        self.feature_names: List[str] = feature_names
+
     def fi_impurity(self) -> tuple:
-        feature_names = self.X.columns
+        """
+        Computes feature importances using impurity-based methods.
+
+        Returns:
+            tuple: A tuple containing standard deviations of feature importances and feature importances.
+        """
         forest = self.model
 
-        importances = forest.feature_importances_
-        std = np.std([tree.feature_importances_ for tree in forest.estimators_], axis=0)
+        importances: np.array = forest.feature_importances_
+        std: np.array = np.std([tree.feature_importances_ for tree in forest.estimators_], axis=0)
 
-        forest_importances = pd.Series(importances, index=feature_names)
+        forest_importances: pd.Series = pd.Series(importances, index=self.feature_names)
         return std, forest_importances
     
-    def fi_impurity_visualize(self) -> None:
-        std, forest_importances = self.fi_impurity()
+    def fi_impurity_visualize(self, std: np.array, forest_importances: pd.Series, **vis_params: dict) -> None:
+        """
+        Visualizes impurity-based feature importances.
 
+        Args:
+            std (np.array): Standard deviations of feature importances.
+            forest_importances (pd.Series): Feature importances.
+            **vis_params (dict): Additional parameters for visualization.
+
+        Returns:
+            None
+        """
         fig, ax = plt.subplots()
-        forest_importances.plot.bar(yerr=std, ax=ax)
+        forest_importances.plot.bar(yerr=std, ax=ax, **vis_params)
         ax.set_title("Feature importances using MDI")
         ax.set_ylabel("Mean decrease in impurity")
         fig.tight_layout()
 
-    def boruta_importance(self):
-    
+    def boruta_importance(self, X_train: Union[pd.DataFrame, np.array], y_train: Union[pd.DataFrame, np.array], **boruta_params: dict) -> BorutaPy:
+        """
+        Computes feature importances using Boruta algorithm.
+
+        Args:
+            X_train (Union[pd.DataFrame, np.array]): Training features.
+            y_train (Union[pd.DataFrame, np.array]): Training target.
+            **boruta_params (dict): Parameters for Boruta algorithm.
+
+        Returns:
+            BorutaPy: Boruta selector object.
+        """
         np.int = np.int32
         np.float = np.float64
         np.bool = np.bool_
 
         forest = self.model
 
-        boruta_selector = BorutaPy(forest, n_estimators='auto', verbose=2)
+        boruta_selector: BorutaPy = BorutaPy(forest, **boruta_params)
 
+        boruta_selector.fit(X_train, y_train)
 
-        boruta_selector.fit(self.X, self.y)
-
-        feature_importance = boruta_selector.feature_importances_
-
-        feature_names = np.array(self.X.columns)
-
-        sorted_idx = np.argsort(feature_importance)[::-1]
-
-        plt.figure(figsize=(10, 6))
-        plt.bar(range(len(feature_importance)), feature_importance[sorted_idx], align='center')
-        plt.xticks(range(len(feature_importance)), feature_names[sorted_idx], rotation=90)
-        plt.xlabel('Features')
-        plt.ylabel('Importance')
-        plt.title('Feature Importance')
-        plt.show()
+        feature_ranks: list = list(zip(self.feature_names, 
+                                boruta_selector.ranking_, 
+                                boruta_selector.support_))
+        
+        for feat in feature_ranks:
+            print('Feature: {:<25} Rank: {},  Keep: {}'.format(feat[0], feat[1], feat[2])) 
+        
+        return boruta_selector
