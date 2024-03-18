@@ -1,9 +1,11 @@
 __pycache__/
-/data/
-/models/
+# /data/
+# /models/
 
 
 *.bak
 *.backup
 
 .ipynb_checkpoints/
+/data
+/models
