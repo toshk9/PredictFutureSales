@@ -1,15 +1,19 @@
-FROM jupyter/datascience-notebook
+FROM ubuntu:20.04
 
-WORKDIR /
+RUN apt-get -y update
+RUN apt-get -y install nginx
 
-USER root
+
+FROM python:3.10
+
+WORKDIR /app
+
+COPY requirements.txt /app
 
 RUN pip install -r requirements.txt
 
-COPY . /home/jovyan/work
+COPY . .
 
-USER jovyan
+RUN chmod +x entrypoint.sh
 
-EXPOSE 8888
-
-CMD ["start-notebook.sh", "--NotebookApp.token=''", "--NotebookApp.notebook_dir='/home/jovyan/work'"]
+CMD ["./entrypoint.sh"]
