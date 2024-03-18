@@ -160,7 +160,7 @@ class DQC:
         """
 
         numeric_patterns = [r"(?:\w+|\b)id\b", r"(?:\w+|\b)price\b", r"(?:\w+|\b)num\b", r"(?:\w+|\b)cnt(?:\w+|\b)", r"(?:\w+|\b)amount(?:\w+|\b)"]
-        date_patterns = [r"(?:\w+|\b)date\b"]
+        date_patterns = [r"(?:\w+|\b)date\b", r"(?:\w+|\b)month\b"]
         string_patterns = [r"(?:\w+|\b)name\b"]
 
         not_numeric_columns: List[str] = []

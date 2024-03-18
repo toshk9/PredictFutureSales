@@ -275,7 +275,7 @@ class ETL:
 
         # converting columns of different data types to the columns of the same data type (data validity)
         for column in self.df.columns:
-            if self.df.dtypes[column] == object: # we check columns with an object type, which could potentially be a column with data of different types
+            if self.df[column].dtype == "object": # we check columns with an object type, which could potentially be a column with data of different types
                 expected_type = type(self.df[column].iloc[0]) # take the value type of the first row
                 self.df = self.df[column].apply(expected_type) # try to convert column samples with a wrong type into the right type (expected_type)
 
