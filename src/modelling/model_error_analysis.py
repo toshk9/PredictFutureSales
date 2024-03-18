@@ -83,7 +83,7 @@ class ModelErrorAnalysis:
         Returns:
             np.float64: Mean absolute error for large target values.
         """
-        big_target_indices: np.array = self.y >= target_threshold
+        big_target_indices: np.array = self.y_test >= target_threshold
         big_target_errors: np.array  = self.errors[big_target_indices]
         big_target_mae: np.float64 = np.mean(np.abs(big_target_errors))
         return big_target_mae
@@ -98,7 +98,7 @@ class ModelErrorAnalysis:
         Returns:
             np.float64: Mean absolute error for small dynamic values.
         """
-        dynamic_indices: np.array  = np.abs(self.y) <= dynamic_threshold
+        dynamic_indices: np.array  = np.abs(self.y_test) <= dynamic_threshold
         dynamic_errors: np.array  = self.errors[dynamic_indices]
         dynamic_mae: np.float64 = np.mean(np.abs(dynamic_errors))
         return dynamic_mae
