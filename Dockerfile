@@ -4,7 +4,7 @@ WORKDIR /
 
 USER root
 
-RUN pip install catboost gdown
+RUN pip install -r requirements.txt
 
 COPY . /home/jovyan/work
 
