@@ -44,7 +44,7 @@ class Feature_Extraction:
         month_mean_price: pd.Series = self.daily_df.groupby(["month", "shop_id", "item_id"])["item_price"].mean()
         month_mean_price.reset_index(drop=True, inplace=True)
         
-        fe_df: pd.DataFrame = self.monthly_df
+        fe_df: pd.DataFrame = self.monthly_df.copy()
         fe_df["mean_month_price"] = month_mean_price
 
         fe_df['month_num'] = fe_df['month'].dt.month
