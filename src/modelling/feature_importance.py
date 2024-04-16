@@ -14,11 +14,11 @@ class Feature_Importance:
 
     Args:
         model: The trained machine learning model.
-        feature_names (List[str]): Names of the features.
+        feature_names (List[str]): Names of the features (X).
 
     Attributes:
         model: The trained machine learning model.
-        feature_names (List[str]): Names of the features.
+        feature_names (List[str]): Names of the features .
 
     Methods:
         fi_impurity(): Computes feature importances using impurity-based methods.

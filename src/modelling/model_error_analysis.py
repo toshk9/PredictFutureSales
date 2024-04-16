@@ -27,7 +27,7 @@ class ModelErrorAnalysis:
         calculate_metrics(): Calculates error metrics.
         plot_residuals(): Plots residuals.
         analyze_big_target(target_threshold): Analyzes errors for large target values.
-        analyze_small_dynamic(dynamic_threshold): Analyzes errors for small dynamic values.
+        analyze_small_target(target_threshold): Analyzes errors for small target values.
         find_influential_samples(threshold): Finds influential samples based on error threshold.
     """
     def __init__(self, model, X_test: Union[pd.DataFrame, np.array], y_test: Union[pd.DataFrame, np.array]) -> None:
@@ -88,20 +88,20 @@ class ModelErrorAnalysis:
         big_target_mae: np.float64 = np.mean(np.abs(big_target_errors))
         return big_target_mae
 
-    def analyze_small_dynamic(self, dynamic_threshold) -> np.float64:
+    def analyze_small_target(self, target_threshold) -> np.float64:
         """
-        Analyzes errors for small dynamic values.
+        Analyzes errors for small target values.
 
         Args:
-            dynamic_threshold: Threshold for defining small dynamic values.
+            target_threshold: Threshold for defining small target values.
 
         Returns:
-            np.float64: Mean absolute error for small dynamic values.
+            np.float64: Mean absolute error for small target values.
         """
-        dynamic_indices: np.array  = np.abs(self.y_test) <= dynamic_threshold
-        dynamic_errors: np.array  = self.errors[dynamic_indices]
-        dynamic_mae: np.float64 = np.mean(np.abs(dynamic_errors))
-        return dynamic_mae
+        small_target_indices: np.array  = np.abs(self.y_test) <= target_threshold
+        small_target_errors: np.array  = self.errors[small_target_indices]
+        small_target_mae: np.float64 = np.mean(np.abs(small_target_errors))
+        return small_target_mae
 
     def find_influential_samples(self, threshold) -> tuple:
         """

@@ -84,7 +84,7 @@ class Explainability_layer:
         Returns:
             None
         """
-        shap_values: np.array = self.calc_shap_values(self.X_train, self.X_test)
+        shap_values: np.array = self.calc_shap_values()
 
         shap.summary_plot(shap_values, self.X_test, feature_names=self.feature_names)
         print("\nForce plot:\n")

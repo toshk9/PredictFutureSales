@@ -1,5 +1,6 @@
 from typing import Union, List
 from tensorflow_metadata.proto.v0 import statistics_pb2
+import argparse
 
 import pandas as pd
 import numpy as np
@@ -70,7 +71,7 @@ class Model:
         Performs inference using the model on new data.
 
         Args:
-            inference_data (pd.DataFrame): New data for inference.
+            inference_data (pd.DataFrame): New raw data for inference.
 
         Returns:
             np.array: Predictions made by the model.
@@ -122,6 +123,24 @@ class Model:
         model_predictions.rename(columns={'index': 'ID'}, inplace=True)
         model_predictions.to_csv(f"data/model_predictions/{file_title}.csv", index=False)
         print("\nThe results of the model prediction have been successfully saved.")
+
+
+###
+
+if __name__ == "__main__":
+    m = Model()
+    parser = argparse.ArgumentParser(description='Run model inference from the command line.')
+    parser.add_argument('--inference', type=str, help='Please specify the directory of the raw data file for the inference (the data must match a predefined schema)', required=True)
+    args = parser.parse_args()
+    
+    inference_data = ETL(args["inference"]).get_data()
+    m.model_inference(inference_data)
+    print("The results of the model have been successfully obtained!\nSave?")
+    save_choice = input("[Y/N] : ")
+    if save_choice == "Y":
+        save_file_title = input("Please specify the file title to save model prediction results: ")
+        m.save_model_predictions(save_file_title)
+        print(f"The results have been saved in '../data/model_predictions/{save_file_title}.csv' successfully!")
 
 
 # Example of usage

@@ -1,10 +1,12 @@
-__pycache__/
 # /data/
 # /models/
 
 
 *.bak
 *.backup
+**/catboost_info/
+**/__pycache__/
+
 
 .ipynb_checkpoints/
 /data
