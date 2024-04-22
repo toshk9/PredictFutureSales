@@ -3,60 +3,6 @@
 ## Overview
 This project is dedicated to solving the Predict Future Sales competition task on Kaggle. The project implements various data processing, analysis and modelling techniques for the Predict Future Sales competition dataset. The project is organized into different layers, including ETL, DQC, EDA and Explainability, Feature Extraction, Moder Error Analysis, etc., to effectively handle and analyze the dataset. 
 
-## Directory Structure
-project_directory/
-│
-├── data/
-│ ├── data_validation/
-│ │ ├── 
-│ │ ├── schema_1.pbtxt
-│ │ ├── schema_2.pbtxt
-│ │ └── ...
-│ │ └── stats_1.pb
-│ │ ├── stats_2.pb
-│ │ └── ...
-│ ├── model_predictions/
-│ │ ├── predictions_run_1.csv
-│ │ ├── predictions_run_2.csv
-│ │ └── ...
-│ ├── processed/
-│ │ ├── processed_data_1.csv
-│ │ ├── processed_data_2.csv
-│ │ └── ...
-│ └── raw/
-│ ├── raw_data_1.csv
-│ ├── raw_data_2.csv
-│ └── ...
-│
-├── models/
-│ ├── CatBoost
-│ ├── XGBoost.bin
-│ ├── Linear Regression.pkl
-│ └── ...
-│
-├── notebooks/
-│ ├── data_analysis.ipynb
-│ └── modelling.ipynb
-│
-└── src/
-├── data/
-│ ├── dqc_layer.py
-│ ├── eda_layer.py
-│ └── etl_layer.py
-│
-├── modelling/
-│ ├── data_validation.py
-│ ├── explainability_layer.py
-│ ├── feature_extraction.py
-│ ├── feature_importance.py
-│ ├── hyperparameter_optimization.py
-│ └── model_error_analysis.py
-│
-├── init.py
-└──  main.py
-├── data_models_download.py
-└── requirements.txt
-
 ## Installation
 To run the project locally, follow these steps:
 1. Clone the repository: `git clone <repository-url>`
