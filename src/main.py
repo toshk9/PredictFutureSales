@@ -125,31 +125,19 @@ class Model:
         print("\nThe results of the model prediction have been successfully saved.")
 
 
-###
-
 if __name__ == "__main__":
     m = Model()
     parser = argparse.ArgumentParser(description='Run model inference from the command line.')
     parser.add_argument('--inference', type=str, help='Please specify the directory of the raw data file for the inference (the data must match a predefined schema)', required=True)
     args = parser.parse_args()
-    
-    inference_data = ETL(args["inference"]).get_data()
+
+    inference_data = ETL(args.inference).get_data()
     m.model_inference(inference_data)
     print("The results of the model have been successfully obtained!\nSave?")
     save_choice = input("[Y/N] : ")
     if save_choice == "Y":
         save_file_title = input("Please specify the file title to save model prediction results: ")
         m.save_model_predictions(save_file_title)
-        print(f"The results have been saved in '../data/model_predictions/{save_file_title}.csv' successfully!")
 
-
-# Example of usage
-# m = Model()
-
-# inference_model_data = pd.read_csv("data/raw/sales_train.csv")
-# y_test = pd.read_csv("data/processed/monthly_sales_full_processed.csv")["item_cnt_month"].values
-
-# y_pred = m.model_inference(inference_model_data)
-# m.save_model_predictions("model_predictions1")
 
 

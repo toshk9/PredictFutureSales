@@ -55,7 +55,7 @@ class Explainability_layer:
         else:
             self.feature_names: List[str] = feature_names
 
-        self.explainer: shap.Explainer = None
+        self.explainer: shap.Explainer = shap.Explainer(self.model, self.X_train)
         self.shap_values: np.array = None
 
         shap.initjs()
@@ -67,8 +67,7 @@ class Explainability_layer:
         Returns:
             np.array: SHAP values.
         """
-        self.explainer: shap.Explainer = shap.Explainer(self.model, self.X_train)
-
+    
         self.shap_values: np.array = self.explainer.shap_values(self.X_test)
         return self.shap_values
     
@@ -84,10 +83,11 @@ class Explainability_layer:
         Returns:
             None
         """
-        shap_values: np.array = self.calc_shap_values()
+        if self.shap_values is None:
+            self.shap_values: np.array = self.calc_shap_values()
 
-        shap.summary_plot(shap_values, self.X_test, feature_names=self.feature_names)
+        shap.summary_plot(self.shap_values, self.X_test, feature_names=self.feature_names)
         print("\nForce plot:\n")
         shap.force_plot(self.explainer.expected_value, self.shap_values[force_sample_idx,:], self.X_test[force_sample_idx,:], feature_names=self.feature_names)
         print("\Dependence plot:\n")
-        shap.dependence_plot(dep_feature_name, self.shap_values[0], self.X_test, interaction_index=dep_interaction_feature_name, feature_names=self.feature_names)
+        shap.dependence_plot(ind=dep_feature_name, shap_values=self.shap_values, features=self.X_test, interaction_index=dep_interaction_feature_name, feature_names=self.feature_names)
