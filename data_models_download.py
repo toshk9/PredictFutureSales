@@ -66,3 +66,6 @@ if __name__ == "__main__":
     create_directories()
     data_download_from_google_drive()
     models_download_from_google_drive()
+
+
+print("TEST")
